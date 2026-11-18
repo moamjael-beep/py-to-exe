@@ -1,0 +1,58 @@
+name: Build EXE
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install pyinstaller
+          pip install requests
+          pip install pandas
+          pip install openpyxl
+          pip install pillow
+          pip install selenium
+          pip install beautifulsoup4
+          pip install lxml
+          pip install webdriver-manager
+
+      - name: Build EXE
+        run: |
+          pyinstaller --onefile --windowed --name="AvaMovie" `
+            --icon=NONE `
+            --hidden-import=selenium `
+            --hidden-import=selenium.webdriver.edge.service `
+            --hidden-import=selenium.webdriver.edge.options `
+            --hidden-import=webdriver_manager `
+            --hidden-import=webdriver_manager.microsoft `
+            --hidden-import=PIL `
+            --hidden-import=PIL.Image `
+            --hidden-import=PIL.ImageTk `
+            --hidden-import=PIL.ImageDraw `
+            --hidden-import=bs4 `
+            --hidden-import=lxml `
+            --hidden-import=lxml.etree `
+            --hidden-import=pandas `
+            --hidden-import=openpyxl `
+            --collect-all selenium `
+            --collect-all webdriver_manager `
+            IIMM_v3.py
+
+      - name: Upload EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: AvaMovie-EXE
+          path: dist/AvaMovie.exe
